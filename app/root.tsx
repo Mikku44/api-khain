@@ -9,6 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Toaster } from "sonner";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -16,6 +17,10 @@ export const links: Route.LinksFunction = () => [
     rel: "preconnect",
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
+  },
+  {
+    rel : "icon",
+    href : "https://khain.app/icon.png"
   },
   {
     rel: "stylesheet",
@@ -33,6 +38,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Toaster position="bottom-right" />
         {children}
         <ScrollRestoration />
         <Scripts />
