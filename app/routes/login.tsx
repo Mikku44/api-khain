@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { Route } from './+types/home';
-import {  loginWithGoogle, useAuthListener } from '~/libs/firebase/auth';
+import { loginWithGoogle, useAuthListener } from '~/libs/firebase/auth';
 import { toast } from 'sonner';
 import Loading from '~/components/Loading';
+import { userService, type IUser } from '~/services/userService';
 
 
 
@@ -34,9 +35,22 @@ export default function AdminLogin() {
         } else {
             const { user, accessToken } = result;
 
+            const userData: IUser = {
+                user_id: user.uid,
+                email: user.email ?? "",
+                emailVerified: user.emailVerified,
+                name: user.displayName ?? "",
+                image: user.photoURL ?? "",
+                usage: {},        // initialize empty usage
+                translate: 0      // default value
+            };
+
+            // Save or update user in Firestore
+            const savedUser = await userService.createOrUpdateUser(userData);
+
             // Optional: do something with user / token, e.g. save to state
             console.log("Logged in user:", user);
-            console.log("Access token:", accessToken);
+            // console.log("Access token:", accessToken);
 
             toast.success("Login successful!");
         }

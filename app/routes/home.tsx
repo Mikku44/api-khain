@@ -5,6 +5,7 @@ import { IoChevronBackOutline, IoChevronForward, IoSearch } from "react-icons/io
 import { LuEye } from "react-icons/lu";
 import GenerateKeyModal from "~/components/GenerateKey";
 import { Dropdown } from "~/components/Select";
+import { useAuthListener } from "~/libs/firebase/auth";
 import type { IToken } from "~/models/tokenModel";
 import { API_LIST } from "~/repositories/app";
 import { getAPIKeys, getAPIKeysWithUser } from "~/services/apiService";
@@ -27,14 +28,23 @@ const statusOptions = [
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [messageSearch, setMessageSearch] = useState("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [curStatus, setStatus] = useState<string | null>(null);
+  
 
 
   const [keys, setKeys] = useState<IToken[]>([]);
 
+  useAuthListener()
 
   useEffect(() => {
     getAPIKeysWithUser("e007TgNAgI7oQoSfm9ry").then((result) => setKeys(result));
+  }, []);
+
+   useEffect(() => {
+  
+    const user = localStorage.getItem("currentUser");
+    if (user) setCurrentUser(JSON.parse(user));
   }, []);
 
   return (
