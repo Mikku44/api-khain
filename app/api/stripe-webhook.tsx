@@ -76,7 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
             const secretKey = process.env.MY_SECRET_KEY!;
 
             const fileLink = encrypt
-                ? decodeWithSecret(encrypt, secretKey)
+                ? decodeWithSecret(encrypt, "jjk3344")
                 : "https://discord.gg/KuMVmcK3cC";
 
             const payload = JSON.stringify({
