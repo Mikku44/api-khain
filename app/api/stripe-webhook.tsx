@@ -47,12 +47,26 @@ export async function action({ request }: ActionFunctionArgs) {
         }
         case "checkout.session.completed": {
             const session = event.data.object as Stripe.Checkout.Session;
+            let encrypt = ""
             console.log("✅ CHECKOUT COMPLETED");
             console.log("id:", session.id);
             console.log("amount_total:", session.amount_total);
             console.log("currency:", session.currency);
             console.log("customer_email:", session.customer_details?.email);
             console.log("metadata:", session.metadata?.encypt);
+
+            const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+                expand: ['data.price.product'], // expand product inside price
+            });
+
+            lineItems.data.forEach((item) => {
+                const product = item.price?.product as Stripe.Product;
+                console.log('Product Name:', product.name);
+                console.log('Product Metadata:', product.metadata?.encypt);
+                encrypt = product.metadata?.encypt
+            });
+
+            
 
             // await sendEmail({
             //     to_name: session.customer_details?.name || "Customer",
@@ -61,8 +75,8 @@ export async function action({ request }: ActionFunctionArgs) {
             // });
             const secretKey = process.env.MY_SECRET_KEY!;
 
-            const fileLink = session.metadata?.encypt
-                ? decodeWithSecret(session.metadata.encypt, secretKey)
+            const fileLink = encrypt
+                ? decodeWithSecret(encrypt, secretKey)
                 : "https://discord.gg/KuMVmcK3cC";
 
             const payload = JSON.stringify({
