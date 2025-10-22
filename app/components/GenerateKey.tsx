@@ -1,22 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoCopy } from "react-icons/go";
+import { createToken } from "~/services/apiService";
 
 export default function GenerateKeyModal({ show, onClose }: { show: boolean; onClose: () => void }) {
   const [keyName, setKeyName] = useState("");
   const [permissions, setPermissions] = useState<{ read: boolean; write: boolean }>({ read: false, write: false });
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     // simple random key generator (for demo purposes)
-    const key = `sk_${Math.random().toString(36).substring(2, 10)}_${Math.random()
-      .toString(36)
-      .substring(2, 6)}`;
-    setGeneratedKey(key);
+    // const key = `sk_${Math.random().toString(36).substring(2, 10)}_${Math.random()
+    //   .toString(36)
+    //   .substring(2, 6)}`;
+      const result = await createToken({ user_id: currentUser.uid,name:keyName || "Free" })
+    setGeneratedKey(result.data.token);
   };
 
   const handleSave  = () => {
     onClose()
+    // window.location.reload();
   }
+
+    useEffect(() => {
+      // Load user from localStorage
+      const user = localStorage.getItem("currentUser");
+      if (user) setCurrentUser(JSON.parse(user));
+    }, []);
 
   if (!show) return null;
 

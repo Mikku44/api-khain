@@ -1,5 +1,4 @@
 import type { Route } from "./+types/home";
-
 import { useEffect, useState } from "react";
 import { IoChevronBackOutline, IoChevronForward, IoSearch } from "react-icons/io5";
 import { LuEye } from "react-icons/lu";
@@ -7,9 +6,8 @@ import GenerateKeyModal from "~/components/GenerateKey";
 import { Dropdown } from "~/components/Select";
 import { useAuthListener } from "~/libs/firebase/auth";
 import type { IToken } from "~/models/tokenModel";
-import { API_LIST } from "~/repositories/app";
-import { getAPIKeys, getAPIKeysWithUser } from "~/services/apiService";
-
+import { listenAPIKeysWithUser } from "~/services/apiService";
+import { deleteToken } from "~/services/apiService"; // import your delete function
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -22,7 +20,6 @@ const statusOptions = [
   { label: "All", value: null },
   { label: "Expired", value: "expired" },
   { label: "Active", value: "active" },
-
 ];
 
 export default function Home() {
@@ -30,22 +27,44 @@ export default function Home() {
   const [messageSearch, setMessageSearch] = useState("");
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [curStatus, setStatus] = useState<string | null>(null);
-  
-
-
   const [keys, setKeys] = useState<IToken[]>([]);
 
-  useAuthListener()
+  const [viewKey, setViewKey] = useState<IToken | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<IToken | null>(null);
+
+  useAuthListener();
 
   useEffect(() => {
-    getAPIKeysWithUser("e007TgNAgI7oQoSfm9ry").then((result) => setKeys(result));
-  }, []);
-
-   useEffect(() => {
-  
     const user = localStorage.getItem("currentUser");
     if (user) setCurrentUser(JSON.parse(user));
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      const unsub = listenAPIKeysWithUser(currentUser.uid, (tokens) => {
+        setKeys(tokens);
+      });
+      return () => unsub();
+    }
+  }, [currentUser]);
+
+  // Copy token to clipboard
+  const copyToClipboard = (token: string) => {
+    navigator.clipboard.writeText(token);
+    alert("Token copied to clipboard!");
+  };
+
+  // Handle hard delete
+  const handleDelete = async () => {
+    if (!confirmDelete) return;
+    const result = await deleteToken(confirmDelete.id!);
+    if (result.success) {
+      setConfirmDelete(null);
+      setViewKey(null);
+    } else {
+      alert("Failed to delete token.");
+    }
+  };
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden font-display">
@@ -56,7 +75,7 @@ export default function Home() {
             <div className="flex flex-wrap justify-between items-start gap-4 p-4">
               <div className="flex min-w-72 flex-col gap-3">
                 <p className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
-                  API Key Management
+                  API Key Management 
                 </p>
                 <p className="text-gray-500 dark:text-[#92adc9] text-base font-normal leading-normal">
                   Create, manage, and secure your API keys. For more information, read our{" "}
@@ -104,8 +123,6 @@ export default function Home() {
                   onChange={setStatus}
                   placeholder="Select font"
                 />
-
-
               </div>
             </div>
 
@@ -133,19 +150,17 @@ export default function Home() {
                         const statusMatch = curStatus
                           ? (item.status || item.plan).toLowerCase() === curStatus.toLowerCase()
                           : true;
-
                         const nameMatch = messageSearch
                           ? (item?.name || item?.plan || item?.id)
                             .toLowerCase()
                             .includes(messageSearch.toLowerCase())
                           : true;
-
                         return statusMatch && nameMatch;
                       })
                       .map((item, i) => {
                         const statusColor =
                           item.plan === "free" ? "green" :
-                            item.plan === "pro" ? "blue" : "gray";
+                          item.plan === "pro" ? "blue" : "gray";
 
                         return (
                           <tr key={i} className="border-t border-t-gray-200 dark:border-t-[#324d67]">
@@ -171,7 +186,10 @@ export default function Home() {
                                 : "N/A"}
                             </td>
                             <td className="h-[72px] px-4 py-2">
-                              <button className="text-gray-500 dark:text-[#92adc9] hover:text-primary">
+                              <button
+                                className="text-gray-500 dark:text-[#92adc9] hover:text-primary"
+                                onClick={() => setViewKey(item)}
+                              >
                                 <LuEye size={18} />
                               </button>
                             </td>
@@ -182,50 +200,73 @@ export default function Home() {
                 </table>
               </div>
             </div>
-
-
-            {/* Pagination */}
-            {/* <div className="flex items-center justify-center p-4">
-              <nav className="flex items-center space-x-1">
-                <a className="flex size-10 items-center justify-center text-gray-500 dark:text-white" href="#">
-                  <span className="material-symbols-outlined text-lg"><IoChevronBackOutline /></span>
-                </a>
-                {[1, 2, 3].map((n) => (
-                  <a
-                    key={n}
-                    className={`text-sm flex size-10 items-center justify-center rounded-full ${n === 1
-                      ? "font-bold text-white bg-primary"
-                      : "font-normal text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-[#233648]"
-                      }`}
-                    href="#"
-                  >
-                    {n}
-                  </a>
-                ))}
-                <span className="text-sm flex size-10 items-center justify-center text-gray-500 dark:text-white">
-                  ...
-                </span>
-                {[8, 9, 10].map((n) => (
-                  <a
-                    key={n}
-                    className="text-sm font-normal flex size-10 items-center justify-center text-gray-700 dark:text-white rounded-full hover:bg-gray-200 dark:hover:bg-[#233648]"
-                    href="#"
-                  >
-                    {n}
-                  </a>
-                ))}
-                <a className="flex size-10 items-center justify-center text-gray-500 dark:text-white" href="#">
-                  <span className="material-symbols-outlined text-lg"><IoChevronForward /></span>
-                </a>
-              </nav>
-            </div> */}
           </div>
         </div>
       </div>
 
-      {/* Modal */}
-      <GenerateKeyModal show={showModal} onClose={() => setShowModal(false)} />
+      {/* Generate Key Modal */}
+      {showModal && (
+        <GenerateKeyModal show={showModal} onClose={() => setShowModal(false)} />
+      )}
 
+      {/* View API Key Modal */}
+      {viewKey && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-[#111a22] rounded-lg p-6 max-w-md w-full shadow-lg relative">
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{viewKey.name || viewKey.plan}</h2>
+            <p className="text-sm text-gray-500 dark:text-[#92adc9] mb-2">Created: {viewKey.create_at?.seconds ? new Date(viewKey.create_at.seconds * 1000).toLocaleString() : "N/A"}</p>
+            <div className="flex items-center justify-between mb-4">
+              <code className="font-mono break-all text-gray-700 dark:text-gray-200">{viewKey.token}</code>
+              <button
+                className="ml-2 px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-sm"
+                onClick={() => copyToClipboard(viewKey.token)}
+              >
+                Copy
+              </button>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                onClick={() => setConfirmDelete(viewKey)}
+              >
+                Delete
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-black dark:text-white rounded"
+                onClick={() => setViewKey(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-[#111a22] rounded-lg p-6 max-w-sm w-full shadow-lg">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Confirm Delete</h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              Are you sure you want to delete the API key <strong>{confirmDelete.name || confirmDelete.plan}</strong>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                onClick={handleDelete}
+              >
+                Yes, Delete
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-black dark:text-white rounded"
+                onClick={() => setConfirmDelete(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

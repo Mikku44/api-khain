@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.4",
+    "@emailjs/browser": "^4.4.1",
+    "@emailjs/nodejs": "^5.0.2",
     "@react-router/node": "^7.9.2",
     "@react-router/serve": "^7.9.2",
     "firebase": "^12.4.0",
