@@ -1,26 +1,13 @@
-import crypto from "crypto";
-
-const algorithm = "aes-256-cbc"; // AES encryption
-const IV_LENGTH = 16; // AES block size
-
-// Encode function
-export function encodeWithSecret(data: string, secretKey: string): string {
-  const key = crypto.createHash("sha256").update(secretKey).digest(); // ensure 32 bytes
-  const iv = crypto.randomBytes(IV_LENGTH);
-  const cipher = crypto.createCipheriv(algorithm, key, iv);
-  const encrypted = Buffer.concat([cipher.update(data, "utf8"), cipher.final()]);
-
-  // Return iv + encrypted as base64
-  return iv.toString("hex") + ":" + encrypted.toString("hex");
+// Simple encode
+export function encodeWithSecret(data: string, secret: string): string {
+  // Just append the secret and base64 encode
+  return Buffer.from(data + secret, "utf8").toString("base64");
 }
 
-// Decode function
-export function decodeWithSecret(encoded: string, secretKey: string): string {
-  const [ivHex, encryptedHex] = encoded.split(":");
-  const iv = Buffer.from(ivHex, "hex");
-  const encrypted = Buffer.from(encryptedHex, "hex");
-  const key = crypto.createHash("sha256").update(secretKey).digest();
-  const decipher = crypto.createDecipheriv(algorithm, key, iv);
-  const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-  return decrypted.toString("utf8");
+// Simple decode
+export function decodeWithSecret(encoded: string, secret: string): string {
+  const decoded = Buffer.from(encoded, "base64").toString("utf8");
+  // Remove the secret from the end
+  if (!decoded.endsWith(secret)) throw new Error("Invalid secret");
+  return decoded.slice(0, -secret.length);
 }
