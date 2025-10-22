@@ -1,4 +1,5 @@
 import type { ActionFunctionArgs } from "react-router";
+import { decodeWithSecret } from "~/libs/cypto/services";
 
 export async function action({ request }: ActionFunctionArgs) {
     try {
@@ -6,6 +7,11 @@ export async function action({ request }: ActionFunctionArgs) {
         const url = new URL(request.url);
         const data = await request.json();
         const origin = url.origin;
+
+        const secretKey = process.env.MY_SECRET_KEY!;
+
+        const fileLink = decodeWithSecret(data.encrypt, secretKey)
+
 
         const payload = JSON.stringify({
             service_id: process.env.EMAILJS_SERVICE_ID!,
@@ -16,11 +22,11 @@ export async function action({ request }: ActionFunctionArgs) {
                 to_email: data.email,
                 name: data.name,
                 email: data.email,
-                file_link: data.file_link
+                file_link: fileLink,
             }
         })
 
-        console.log("PAYLOAD : ",payload)
+        console.log("PAYLOAD : ", payload)
 
         const emailjsResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
             method: 'POST',
@@ -31,7 +37,7 @@ export async function action({ request }: ActionFunctionArgs) {
             body: payload,
         });
 
-   
+
 
         // const result = await emailjsResponse;
         // console.log("Email sent:", emailjsResponse);

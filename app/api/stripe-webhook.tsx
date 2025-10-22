@@ -52,13 +52,13 @@ export async function action({ request }: ActionFunctionArgs) {
             console.log("amount_total:", session.amount_total);
             console.log("currency:", session.currency);
             console.log("customer_email:", session.customer_details?.email);
-            console.log("metadata:", session.metadata);
+            console.log("metadata:", session.metadata?.encypt);
 
-            await sendEmail({
-                to_name: session.customer_details?.name || "Customer",
-                to_email: session.customer_details?.email!,
-                file_link: session.metadata?.file_link || "#",
-            });
+            // await sendEmail({
+            //     to_name: session.customer_details?.name || "Customer",
+            //     to_email: session.customer_details?.email!,
+            //     file_link: session.metadata?.file_link || "#",
+            // });
             const secretKey = process.env.MY_SECRET_KEY!;
 
             const fileLink = session.metadata?.encypt
