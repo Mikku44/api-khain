@@ -61,31 +61,31 @@ export async function action({ request }: ActionFunctionArgs) {
             });
             const secretKey = process.env.MY_SECRET_KEY!;
 
-
+            const fileLink = session.metadata?.encypt
+                ? decodeWithSecret(session.metadata.encypt, secretKey)
+                : "https://discord.gg/KuMVmcK3cC";
 
             const payload = JSON.stringify({
                 service_id: process.env.EMAILJS_SERVICE_ID!,
                 template_id: process.env.EMAILJS_TEMPLATE_ID!,
                 user_id: process.env.EMAILJS_PUBLIC_KEY!,
                 template_params: {
-                    "to_name": session.customer_details?.name || "Customer (Muki Gang)",
-                    "to_email": session.customer_details?.email!,
-                    "name": session.customer_details?.name || "Customer (Muki Gang)",
-                    "email": session.customer_details?.email!,
-                    "file_link": session.metadata?.encypt ? decodeWithSecret(session.metadata?.encypt, secretKey) : "https://discord.gg/KuMVmcK3cC"
-                }
-            })
-
-
-
-            const emailjsResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': origin,
+                    to_name: session.customer_details?.name || "Customer (Muki Gang)",
+                    to_email: session.customer_details?.email!,
+                    name: session.customer_details?.name || "Customer (Muki Gang)",
+                    email: session.customer_details?.email!,
+                    file_link: fileLink,
                 },
-                body: (payload),
             });
+
+            const emailjsResponse = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: payload,
+            });
+
 
             break;
         }
