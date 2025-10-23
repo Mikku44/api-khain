@@ -74,7 +74,7 @@ export async function action({ request }: ActionFunctionArgs) {
                 : "https://discord.gg/KuMVmcK3cC";
 
             const payload = JSON.stringify({
-                name: session.customer_details?.name,
+                name: session.customer_details?.name || "Customer (Muki)",
                 to_email: session.customer_details?.email!,
                 file_link: fileLink,
             });

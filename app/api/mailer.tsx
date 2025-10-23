@@ -27,9 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
 <table style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);" role="presentation" border="0" width="100%" cellspacing="0" cellpadding="0"><!-- Header with Logo -->
 <tbody>
 <tr>
-<td style="padding: 40px 40px 32px 40px; text-align: center; border-bottom: 1px solid #f0f0f0;"><a style="text-decoration: none; display: inline-block;" href="https://khain.app" target="_blank" rel="noopener">
-<img src="https://khain.app/images/khain/svg/Khain%20Logo.svg"></img>
-</a></td>
+
 </tr>
 <!-- Content Section -->
 <tr>
