@@ -32,3 +32,6 @@ export const API_LIST = [
         used: "1 week ago",
     },
 ]
+
+
+export const BASE_URL = "https://api.khain.app"

@@ -4,6 +4,7 @@ import type { Route } from "./+types/stripe-webhook";
 import Stripe from "stripe";
 import { sendEmail } from "~/services/emailService";
 import { decodeWithSecret } from "~/libs/cypto/services";
+import { BASE_URL } from "~/repositories/app";
 
 export function meta({ }: Route.MetaArgs) {
     return [
@@ -66,13 +67,6 @@ export async function action({ request }: ActionFunctionArgs) {
                 encrypt = product.metadata?.encypt
             });
 
-            
-
-            // await sendEmail({
-            //     to_name: session.customer_details?.name || "Customer",
-            //     to_email: session.customer_details?.email!,
-            //     file_link: session.metadata?.file_link || "#",
-            // });
             const secretKey = process.env.MY_SECRET_KEY!;
 
             const fileLink = encrypt
@@ -80,19 +74,14 @@ export async function action({ request }: ActionFunctionArgs) {
                 : "https://discord.gg/KuMVmcK3cC";
 
             const payload = JSON.stringify({
-                service_id: process.env.EMAILJS_SERVICE_ID!,
-                template_id: process.env.EMAILJS_TEMPLATE_ID!,
-                user_id: process.env.EMAILJS_PUBLIC_KEY!,
-                template_params: {
-                    to_name: session.customer_details?.name || "Customer (Muki Gang)",
-                    to_email: session.customer_details?.email!,
-                    name: session.customer_details?.name || "Customer (Muki Gang)",
-                    email: session.customer_details?.email!,
-                    file_link: fileLink,
-                },
+                name: session.customer_details?.name || "Customer (Muki Gang)",
+                email: session.customer_details?.email!,
+                file_link: fileLink,
             });
 
-            const emailjsResponse = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+            console.log(payload)
+
+            const emailjsResponse = await fetch(`${BASE_URL}/api/email`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -100,6 +89,9 @@ export async function action({ request }: ActionFunctionArgs) {
                 body: payload,
             });
 
+            const result = await emailjsResponse.json()
+
+            console.log("RESULT : ",result)
 
             break;
         }
