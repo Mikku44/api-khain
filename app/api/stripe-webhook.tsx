@@ -74,14 +74,14 @@ export async function action({ request }: ActionFunctionArgs) {
                 : "https://discord.gg/KuMVmcK3cC";
 
             const payload = JSON.stringify({
-                name: session.customer_details?.name || "Customer (Muki Gang)",
-                email: session.customer_details?.email!,
+                name: session.customer_details?.name,
+                to_email: session.customer_details?.email!,
                 file_link: fileLink,
             });
 
             console.log(payload)
 
-            const emailjsResponse = await fetch(`${BASE_URL}/webhook/email`, {
+            const emailjsResponse = await fetch(`${BASE_URL}/api/mailer`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

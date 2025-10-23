@@ -10,7 +10,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
         const secretKey = process.env.MY_SECRET_KEY!;
 
-        const fileLink = decodeWithSecret(data.encrypt, secretKey)
+        const fileLink = data.file_link
 
 
         const payload = JSON.stringify({

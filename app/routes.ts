@@ -8,6 +8,8 @@ export default [
         route("/webhook/email", "api/email.tsx")
     ]),
     route("/api/encoder","api/cypto.tsx"),
+    route("/api/test","api/test.tsx"),
+    route("/api/mailer","api/mailer.tsx"),
     // route("/api/decoder","api/cyptoDe.tsx")
 
 ] satisfies RouteConfig;
