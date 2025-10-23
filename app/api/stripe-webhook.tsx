@@ -81,7 +81,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
             console.log(payload)
 
-            const emailjsResponse = await fetch(`${BASE_URL}/api/email`, {
+            const emailjsResponse = await fetch(`${BASE_URL}/webhook/email`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
