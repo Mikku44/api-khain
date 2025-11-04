@@ -52,12 +52,13 @@ export async function action({ request }: { request: Request }) {
     } as IWeb;
 
     // ✅ Save to Firestore
-    const savedWeb = await webResponsesService.createOrUpdateWeb(payload);
+    const savedWeb  : IWeb & any = await webResponsesService.createOrUpdateWeb(payload);
     if(savedWeb.error) throw Error(savedWeb.error)
     return new Response(
       JSON.stringify({
         message: "Web response saved successfully",
         data: savedWeb,
+        url : `https://api.khain.app/web/${savedWeb?.id}`
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
