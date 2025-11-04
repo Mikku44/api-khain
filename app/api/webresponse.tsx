@@ -1,6 +1,7 @@
 import type { IWeb } from "~/models/webModel";
 import { webResponsesService } from "~/services/webResponseService";
 import jwt from "jsonwebtoken"; 
+import { userService } from "~/services/userService";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // should be set in env
 
@@ -54,6 +55,8 @@ export async function action({ request }: { request: Request }) {
     // ✅ Save to Firestore
     const savedWeb  : IWeb & any = await webResponsesService.createOrUpdateWeb(payload);
     if(savedWeb.error) throw Error(savedWeb.error)
+      
+    const increasedUsage = userService.increaseApiUsage(user_id)
     return new Response(
       JSON.stringify({
         message: "Web response saved successfully",

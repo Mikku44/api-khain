@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, updateDoc, Timestamp, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, Timestamp, onSnapshot, increment } from "firebase/firestore";
 import { db } from "~/libs/firebase/client";
 
 export interface IUser {
@@ -39,6 +39,41 @@ export const userService = {
     }
 
     return { id: user.user_id, ...dataToSave };
+  },
+
+   /**
+   * Increase API usage count by 1 (or custom amount)
+   */
+   async increaseApiUsage(user_id: string, amount: number = 1, limit: number = 1000) {
+    if (!user_id) throw new Error("user_id is required");
+
+    const userRef = doc(db, "users", user_id);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      // create user if not exist
+      await setDoc(userRef, {
+        user_id,
+        usage: { api: amount },
+        created_at: Timestamp.now(),
+        updated_at: Timestamp.now(),
+      });
+      return amount;
+    }
+
+    const currentUsage = userSnap.data()?.usage?.api ?? 0;
+
+    if (currentUsage >= limit) {
+      throw new Error("You have reached your API usage limit.");
+    }
+
+    // increment safely
+    await updateDoc(userRef, {
+      "usage.api": increment(amount),
+      updated_at: Timestamp.now(),
+    });
+
+    return currentUsage + amount;
   },
 
   /**
