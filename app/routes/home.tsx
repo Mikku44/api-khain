@@ -2,6 +2,7 @@ import type { Route } from "./+types/home";
 import { useEffect, useState } from "react";
 import { IoChevronBackOutline, IoChevronForward, IoSearch } from "react-icons/io5";
 import { LuEye } from "react-icons/lu";
+import { toast } from "sonner";
 import GenerateKeyModal from "~/components/GenerateKey";
 import { Dropdown } from "~/components/Select";
 import { useAuthListener } from "~/libs/firebase/auth";
@@ -51,7 +52,7 @@ export default function Home() {
   // Copy token to clipboard
   const copyToClipboard = (token: string) => {
     navigator.clipboard.writeText(token);
-    alert("Token copied to clipboard!");
+     toast.success("API Key copied to clipboard!");
   };
 
   // Handle hard delete
@@ -59,155 +60,173 @@ export default function Home() {
     if (!confirmDelete) return;
     const result = await deleteToken(confirmDelete.id!);
     if (result.success) {
+       toast.success("Succes to delete token.");
       setConfirmDelete(null);
       setViewKey(null);
     } else {
-      alert("Failed to delete token.");
+      toast.error("Failed to delete token.");
     }
   };
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden font-display">
-      <div className="layout-container flex h-full grow flex-col">
-        <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
-          <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
-            {/* Header */}
-            <div className="flex flex-wrap justify-between items-start gap-4 p-4">
-              <div className="flex min-w-72 flex-col gap-3">
-                <p className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
-                  API Key Management 
-                </p>
-                <p className="text-gray-500 dark:text-[#92adc9] text-base font-normal leading-normal">
-                  Create, manage, and secure your API keys. For more information, read our{" "}
-                  <a className="text-primary hover:underline" href="#">
-                    API documentation
-                  </a>.
-                </p>
-              </div>
-              <div className="flex-shrink-0 pt-2">
-                <button
-                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white gap-2 pl-5 text-base font-bold leading-normal tracking-[0.015em]"
-                  onClick={() => setShowModal(true)}
-                >
-                  <span className="material-symbols-outlined">add</span>
-                  <span className="truncate">Generate New API Key</span>
-                </button>
-              </div>
-            </div>
+      <div className="">
 
-            {/* Search & Filters */}
-            <div className="flex items-center gap-4 px-4 py-3">
-              <div className="flex-grow">
-                <label className="flex flex-col min-w-40 h-12 w-full">
-                  <div className="flex w-full flex-1 items-stretch rounded-lg h-full">
-                    <div className="text-gray-400 dark:text-[#92adc9] flex bg-gray-100 dark:bg-[#233648] items-center justify-center pl-4 rounded-l-lg border border-gray-200 dark:border-[#324d67] border-r-0">
-                      <span className="material-symbols-outlined pr-4"><IoSearch /></span>
-                    </div>
-                    <input
-                      className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 
+        <div className=" flex flex-col mx-auto   max-w-[960px] flex-1">
+          {/* Header */}
+          <div className="flex flex-wrap justify-between items-start gap-4 p-4">
+            <div className="flex min-w-72 flex-col gap-3">
+              <p className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                API Key Management
+              </p>
+              <p className="text-gray-500 dark:text-[#92adc9] text-base font-normal leading-normal">
+                Create, manage, and secure your API keys. For more information, read our{" "}
+                <a className="text-primary hover:underline" href="#">
+                  API documentation
+                </a>.
+              </p>
+            </div>
+            <div className="flex-shrink-0 pt-2">
+              <button
+                className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white gap-2 pl-5 text-base font-bold leading-normal tracking-[0.015em]"
+                onClick={() => setShowModal(true)}
+              >
+                <span className="material-symbols-outlined">add</span>
+                <span className="truncate">Generate New API Key</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Search & Filters */}
+          <div className="flex items-center gap-4 px-4 py-3">
+            <div className="flex-grow">
+              <label className="flex flex-col min-w-40 h-12 w-full">
+                <div className="flex w-full flex-1 items-stretch rounded-lg h-full">
+                  <div className="text-gray-400 dark:text-[#92adc9] flex bg-gray-100 dark:bg-[#233648] items-center justify-center pl-4 rounded-l-lg border border-gray-200 dark:border-[#324d67] border-r-0">
+                    <span className="material-symbols-outlined pr-4"><IoSearch /></span>
+                  </div>
+                  <input
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 
                       dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-200 
                       dark:border-[#324d67] bg-gray-100 dark:bg-[#233648] h-full placeholder:text-gray-400 
                       dark:placeholder:text-[#92adc9] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                      placeholder="Search by name or partial key..."
-                      value={messageSearch}
-                      type="text"
-                      onChange={(e) => setMessageSearch(e.target.value)}
-                    />
-                  </div>
-                </label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Dropdown
-                  options={statusOptions}
-                  value={curStatus}
-                  onChange={setStatus}
-                  placeholder="Select font"
-                />
-              </div>
+                    placeholder="Search by name or partial key..."
+                    value={messageSearch}
+                    type="text"
+                    onChange={(e) => setMessageSearch(e.target.value)}
+                  />
+                </div>
+              </label>
             </div>
-
-            {/* Table */}
-            <div className="px-4 py-3">
-              <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-[#324d67] bg-background-light dark:bg-[#111a22]">
-                <table className="flex-1">
-                  <thead>
-                    <tr className="bg-gray-50 dark:bg-[#192633]">
-                      {["Key Name", "Partial Key", "Status", "Permissions", "Last Used", "Actions"].map(
-                        (header) => (
-                          <th
-                            key={header}
-                            className="px-4 py-3 text-left text-gray-600 dark:text-white text-sm font-medium leading-normal"
-                          >
-                            {header}
-                          </th>
-                        )
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {keys
-                      .filter(item => {
-                        const statusMatch = curStatus
-                          ? (item.status || item.plan).toLowerCase() === curStatus.toLowerCase()
-                          : true;
-                        const nameMatch = messageSearch
-                          ? (item?.name || item?.plan || item?.id)
-                            .toLowerCase()
-                            .includes(messageSearch.toLowerCase())
-                          : true;
-                        return statusMatch && nameMatch;
-                      })
-                      .map((item, i) => {
-                        const statusColor =
-                          item.plan === "free" ? "green" :
-                          item.plan === "pro" ? "blue" : "gray";
-
-                        return (
-                          <tr key={i} className="border-t border-t-gray-200 dark:border-t-[#324d67]">
-                            <td className="h-[72px] px-4 py-2 text-gray-900 dark:text-white text-sm font-normal leading-normal">
-                              {item.name || item.plan || item.id}
-                            </td>
-                            <td className="h-[72px] px-4 py-2 font-mono text-gray-500 dark:text-[#92adc9] text-sm">
-                              {item.token.slice(0, 8)}...
-                            </td>
-                            <td className="h-[72px] px-4 py-2">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}-800 dark:bg-${statusColor}-900/50 dark:text-${statusColor}-300`}
-                              >
-                                {item.status || item.plan}
-                              </span>
-                            </td>
-                            <td className="h-[72px] px-4 py-2 text-gray-500 dark:text-[#92adc9] text-sm">
-                              read/write
-                            </td>
-                            <td className="h-[72px] px-4 py-2 text-gray-500 dark:text-[#92adc9] text-sm">
-                              {item.create_at?.seconds
-                                ? new Date(item.create_at.seconds * 1000).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="h-[72px] px-4 py-2">
-                              <button
-                                className="text-gray-500 dark:text-[#92adc9] hover:text-primary"
-                                onClick={() => setViewKey(item)}
-                              >
-                                <LuEye size={18} />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
-              </div>
+            <div className="flex items-center gap-2">
+              <Dropdown
+                options={statusOptions}
+                value={curStatus}
+                onChange={setStatus}
+                placeholder="Select font"
+              />
             </div>
           </div>
+
+          {/* Table */}
+          <div className="px-4 py-3">
+            <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-[#324d67] bg-background-light dark:bg-[#111a22]">
+              <table className="flex-1">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-[#192633]">
+                    {["Key Name", "Partial Key", "Status", "Permissions", "Last Used", "Actions"].map(
+                      (header) => (
+                        <th
+                          key={header}
+                          className="px-4 py-3 text-left text-gray-600 dark:text-white text-sm font-medium leading-normal"
+                        >
+                          {header}
+                        </th>
+                      )
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {keys
+                    .filter(item => {
+                      const statusMatch = curStatus
+                        ? (item.status || item.plan).toLowerCase() === curStatus.toLowerCase()
+                        : true;
+                      const nameMatch = messageSearch
+                        ? (item?.name || item?.plan || item?.id)
+                          .toLowerCase()
+                          .includes(messageSearch.toLowerCase())
+                        : true;
+                      return statusMatch && nameMatch;
+                    })
+                    .map((item, i) => {
+                      const statusColor =
+                        item.plan === "free" ? "green" :
+                          item.plan === "pro" ? "blue" : "gray";
+
+                      return (
+                        <tr key={i} className="border-t border-t-gray-200 dark:border-t-[#324d67]">
+                          <td className="h-[72px] px-4 py-2 text-gray-900 dark:text-white text-sm font-normal leading-normal">
+                            {item.name || item.plan || item.id}
+                          </td>
+                          <td className="h-[72px] px-4 py-2 font-mono text-gray-500 dark:text-[#92adc9] text-sm">
+                            {item.token.slice(0, 8)}...
+                          </td>
+                          <td className="h-[72px] px-4 py-2">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}-800 dark:bg-${statusColor}-900/50 dark:text-${statusColor}-300`}
+                            >
+                              {item.status || item.plan}
+                            </span>
+                          </td>
+                          <td className="h-[72px] px-4 py-2 text-gray-500 dark:text-[#92adc9] text-sm">
+                            read/write
+                          </td>
+                          <td className="h-[72px] px-4 py-2 text-gray-500 dark:text-[#92adc9] text-sm">
+                            {item.create_at?.seconds
+                              ? new Date(item.create_at.seconds * 1000).toLocaleDateString()
+                              : "N/A"}
+                          </td>
+                          <td className="h-[72px] px-4 py-2">
+                            <button
+                              className="text-gray-500 dark:text-[#92adc9] hover:text-primary"
+                              onClick={() => setViewKey(item)}
+                            >
+                              <LuEye size={18} />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+
+
+                </tbody>
+
+              </table>
+
+            </div>
+            {keys?.length <= 0 &&
+              <div className="h-[280px]  w-full flex flex-col items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                  className="text-green-400"
+                  width="72" height="72" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2s7.071 0 8.535 1.464C22 4.93 22 7.286 22 12s0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12" opacity="0.5" />
+                  <path fill="currentColor" fill-rule="evenodd" d="M18 9.776a3.784 3.784 0 0 1-3.792 3.776c-.382 0-1.252-.088-1.675-.439l-.529.527c-.311.31-.227.401-.089.551c.058.063.125.136.177.24c0 0 .441.614 0 1.229c-.264.351-1.005.843-1.851 0l-.177.175s.53.615.088 1.23c-.264.351-.97.702-1.587.088l-.617.614c-.423.422-.94.176-1.146 0l-.53-.527c-.493-.491-.205-1.024 0-1.229l4.586-4.566s-.441-.703-.441-1.669A3.784 3.784 0 0 1 14.208 6A3.784 3.784 0 0 1 18 9.776m-3.792 1.317c.73 0 1.323-.59 1.323-1.317a1.32 1.32 0 0 0-1.323-1.317c-.73 0-1.322.59-1.322 1.317a1.32 1.32 0 0 0 1.322 1.317" clip-rule="evenodd" /></svg>
+                <p className="text-gray-500 dark:text-[#92adc9] text-base font-normal leading-normal">
+                  Create and manage your API keys to get started.
+                </p>
+              </div>
+            }
+          </div>
         </div>
+
       </div>
 
       {/* Generate Key Modal */}
       {showModal && (
         <GenerateKeyModal show={showModal} onClose={() => setShowModal(false)} />
       )}
+
 
       {/* View API Key Modal */}
       {viewKey && (
@@ -219,7 +238,10 @@ export default function Home() {
               <code className="font-mono break-all text-gray-700 dark:text-gray-200">{viewKey.token}</code>
               <button
                 className="ml-2 px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-sm"
-                onClick={() => copyToClipboard(viewKey.token)}
+                onClick={() => {
+                  copyToClipboard(viewKey.token)
+                 
+                }}
               >
                 Copy
               </button>

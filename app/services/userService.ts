@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, updateDoc, Timestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, Timestamp, onSnapshot } from "firebase/firestore";
 import { db } from "~/libs/firebase/client";
 
 export interface IUser {
@@ -49,5 +49,39 @@ export const userService = {
     const userSnap = await getDoc(userRef);
     if (!userSnap.exists()) return null;
     return { id: userSnap.id, ...userSnap.data() };
-  }
+  },
+
+  async listenToUserUsageApi(user_id: string, callback: (data: any | null) => void) {
+  if (!user_id) throw new Error("user_id is required");
+
+  const userRef = doc(db, "users", user_id);
+
+  // Listen in realtime to this user's document
+  const unsubscribe = onSnapshot(
+    userRef,
+    (userSnap: { exists: () => any; data: () => any; id: any; }) => {
+      if (!userSnap.exists()) {
+        callback(null);
+        return;
+      }
+
+      const data = userSnap.data();
+      const usageApi = data?.usage?.api ?? null;
+      const userPlan = data?.plan ?? null;
+
+      // same style of return structure as your getUserById
+      callback({
+        id: userSnap.id,
+        usageApi,
+        plan: userPlan,
+      });
+    },
+    (error) => {
+      console.error("Error listening to user:", error);
+      callback(null);
+    }
+  );
+
+  return unsubscribe; // allow caller to stop listening
+}
 };

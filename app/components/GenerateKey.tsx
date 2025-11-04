@@ -1,32 +1,34 @@
 import { useEffect, useState } from "react";
 import { GoCopy } from "react-icons/go";
+import { toast } from "sonner";
 import { createToken } from "~/services/apiService";
 
 export default function GenerateKeyModal({ show, onClose }: { show: boolean; onClose: () => void }) {
   const [keyName, setKeyName] = useState("");
   const [permissions, setPermissions] = useState<{ read: boolean; write: boolean }>({ read: false, write: false });
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
-   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   const handleGenerate = async () => {
     // simple random key generator (for demo purposes)
     // const key = `sk_${Math.random().toString(36).substring(2, 10)}_${Math.random()
     //   .toString(36)
     //   .substring(2, 6)}`;
-      const result = await createToken({ user_id: currentUser.uid,name:keyName || "Free" })
+    const result = await createToken({ user_id: currentUser.uid, name: keyName || "Free" })
     setGeneratedKey(result.data.token);
+     toast.success("API Key generated successfully!");
   };
 
-  const handleSave  = () => {
+  const handleSave = () => {
     onClose()
     // window.location.reload();
   }
 
-    useEffect(() => {
-      // Load user from localStorage
-      const user = localStorage.getItem("currentUser");
-      if (user) setCurrentUser(JSON.parse(user));
-    }, []);
+  useEffect(() => {
+    // Load user from localStorage
+    const user = localStorage.getItem("currentUser");
+    if (user) setCurrentUser(JSON.parse(user));
+  }, []);
 
   if (!show) return null;
 
@@ -77,7 +79,10 @@ export default function GenerateKeyModal({ show, onClose }: { show: boolean; onC
               <div className="relative bg-gray-100 dark:bg-[#233648] p-3 rounded-lg font-mono text-gray-800 dark:text-white break-all">
                 {generatedKey}
                 <div
-                  onClick={() => navigator.clipboard.writeText(generatedKey)}
+                  onClick={() => {
+                    navigator.clipboard.writeText(generatedKey)
+                    toast.success("API Key copied to clipboard!")
+                  }}
                   className="absolute top-[15px] right-2 text-gray-500 dark:text-gray-300 hover:text-primary"
                   title="Copy to clipboard"
                 >
@@ -96,7 +101,7 @@ export default function GenerateKeyModal({ show, onClose }: { show: boolean; onC
             >
               Cancel
             </button>
-            {generatedKey ? 
+            {/* {generatedKey ? 
             <button
               className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90"
               onClick={handleSave}
@@ -105,6 +110,13 @@ export default function GenerateKeyModal({ show, onClose }: { show: boolean; onC
             </button>
             :
             <button
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90"
+              onClick={handleGenerate}
+            >
+              Generate Key
+            </button>} */}
+
+           {!generatedKey && <button
               className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90"
               onClick={handleGenerate}
             >

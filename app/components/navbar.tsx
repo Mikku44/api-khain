@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { logoutUser } from "~/libs/firebase/auth";
-
-import { auth } from "~/libs/firebase/client";
+import UserPopover from "./UserPopover";
 
 
 export default function Navbar() {
@@ -21,48 +20,37 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white dark:bg-[#111a22] shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className=" fixed top-0 w-full z-10 ">
+      <div className="max-w-[960px] mx-auto px-4 bg-white/70 border border-zinc-200 mt-2 rounded-xl">
         <div className="flex justify-between h-16">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="text-xl font-bold text-gray-800 dark:text-white">
-              <img src="https://khain.app/images/khain/svg/Khain.svg" alt="khain logo" />
-            </Link>
-          </div>
+          <Link to="/" className=" flex items-center gap-2">
+            <div className="text-xl size-10 font-bold text-gray-800 dark:text-white">
+              <img src="/khain.png" alt="khain logo" />
+            </div>
+            <div className="font-medium">API KHAIN</div>
+          </Link>
 
           {/* Desktop Links */}
           <div className="hidden sm:ml-6 sm:flex sm:space-x-6 items-center">
-            {/* <Link
-              to="/"
-              className="text-gray-700 dark:text-gray-200 hover:text-primary"
-            >
-              Home
-            </Link>
-            <Link
-              to="/about"
-              className="text-gray-700 dark:text-gray-200 hover:text-primary"
-            >
-              About
-            </Link>
-            <Link
-              to="/dashboard"
-              className="text-gray-700 dark:text-gray-200 hover:text-primary"
-            >
-              Dashboard
-            </Link> */}
+
 
             {/* User Profile / Login */}
             {currentUser ? (
               <div className="flex items-center space-x-4">
-                <img
-                  src={currentUser.photoURL || "/default-avatar.png"}
-                  alt="User Avatar"
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                  {currentUser.displayName} 
-                </span>
+              
+                {/* <Avatar.Root className={"Root"}>
+                  <Avatar.Image
+                   src={"currentUser.photoURL"} 
+                    width="48"
+                    height="48"
+                    className={"Image"}
+                  />
+                  <Avatar.Fallback className={"Fallback"}>{currentUser.displayName?.slice(0, 3)}</Avatar.Fallback>
+                </Avatar.Root> */}
+                <UserPopover currentUser={currentUser}   />
+             
+               
                 <button
                   onClick={handleLogout}
                   className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"

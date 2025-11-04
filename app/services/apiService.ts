@@ -2,6 +2,9 @@ import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, serverT
 import { db } from "~/libs/firebase/client"
 import type { IToken } from "~/models/tokenModel";
 
+import { SignJWT } from "jose";
+
+const secret = new TextEncoder().encode(import.meta.env.VITE_JWT_SECRET || "your-secret-key");
 
 export async function getAPIKeys() {
 
@@ -71,15 +74,23 @@ export async function getAPIKeysWithUser(user_id: string) {
 
 export async function createToken({ user_id,name }: { user_id: string ,name? :string}) {
   const tokensRef = collection(db, "tokens");
+
+  const uuid = crypto.randomUUID();
+
+  const token = await new SignJWT({ user_id, uuid, name })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("30d")
+    .sign(secret);
   
 
   // 2. Create new token if none exists
   const newToken = {
     name ,
     user_id,
-    create_at: serverTimestamp(),
+    created_at: serverTimestamp(),
     plan: "free",
-    token: crypto.randomUUID(), 
+    token:token, 
     usage: 0,
     status: "active",
   };

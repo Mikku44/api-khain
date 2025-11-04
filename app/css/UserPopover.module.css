@@ -1,0 +1,84 @@
+.AvatarButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.AvatarRoot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.AvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.AvatarFallback {
+  display: flex;
+  gap:10px;
+  align-items: center;
+  /* justify-content: center; */
+  background-color: #eee;
+  color: #555;
+  font-weight: 500;
+}
+
+.Popup {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 220px;
+}
+
+.Arrow {
+  color: white;
+}
+
+.Title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.Description {
+  font-size: 13px;
+  color: #555;
+}
+
+.InfoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.ProgressBar {
+  height: 6px;
+  border-radius: 3px;
+  background-color: #f2f2f2;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.ProgressFill {
+  height: 100%;
+  background-color: #05feb0;
+  transition: width 0.3s ease;
+}
+
+.UpgradeButton {
+  background: none;
+
+  /* border: none; */
+  /* color: #02be82; */
+  font-size: 12px;
+  width: 100%;
+  cursor: pointer;
+  text-align: right;
+}

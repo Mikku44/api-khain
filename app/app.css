@@ -38,6 +38,11 @@
   }
 }
 
+
+.container-x {
+  @apply mx-auto px-4 max-w-[960px];
+}
+
 html,
 body {
   @apply bg-white dark:bg-gray-950;
@@ -242,3 +247,28 @@ button {
     background-color: transparent;
   }
 }
+
+
+
+::-webkit-scrollbar {
+  width: 16px;
+  position: absolute;;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff1d; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  animation-duration: 0.3s;
+  background: oklch(98.42% 0.0034 247.86deg);
+  @apply px-3 py-1  text-white rounded border-2 duration-200 border-black/10 text-sm;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+ background: oklch(92.777% 0.00301 264.78);
+}
+
