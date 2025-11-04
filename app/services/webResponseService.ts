@@ -34,6 +34,11 @@ export const webResponsesService = {
     if (webSnap.exists()) {
       await updateDoc(webRef, dataToSave);
     } else {
+      if(web.id) {
+        return {
+          error : "Web ID does not exist."
+        }
+      }
       await setDoc(webRef, {
         ...dataToSave,
         created_at: Timestamp.now(),

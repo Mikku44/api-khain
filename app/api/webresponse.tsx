@@ -53,7 +53,7 @@ export async function action({ request }: { request: Request }) {
 
     // ✅ Save to Firestore
     const savedWeb = await webResponsesService.createOrUpdateWeb(payload);
-
+    if(savedWeb.error) throw Error(savedWeb.error)
     return new Response(
       JSON.stringify({
         message: "Web response saved successfully",

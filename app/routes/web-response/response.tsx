@@ -17,7 +17,7 @@ export async function clientLoader({
   return webResponse;
 }
 
-export function meta({ data }: Route.MetaArgs) {
+export function meta({ data }: any) {
   if (!data) {
     return [
       { title: "Not Found - Khain.app" },
