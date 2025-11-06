@@ -1,17 +1,21 @@
 import { stripe } from "~/libs/stripe/server";
 import type { Route } from "./+types/checkout";
 
+const devPlanMapping = {
+  starter: "price_1SKcvgCtoGhHqXqWigDGkqFx",
+  goplan: "price_1SKcvgCtoGhHqXqWigDGkqFx",
+  professional: "price_1SQPFSCtoGhHqXqWjoGHj0Z9",
+};
 
-// const planMapping : any = {
-//   "starter" : "price_1SPlp0CtoGhHqXqWWybxEXa3",
-//   "goplan" : "price_1SQ78xCtoGhHqXqW69rFgfkc",
-//   "professional" : "price_1SQUCECtoGhHqXqWspUR1Af2"
-// }
-export const planMapping: any = {
-  "starter": "price_1SKcvgCtoGhHqXqWigDGkqFx",
-  "goplan": "price_1SKcvgCtoGhHqXqWigDGkqFx",
-  "professional": "price_1SQPFSCtoGhHqXqWjoGHj0Z9"
-}
+const prodPlanMapping = {
+  starter: "price_1SPlp0CtoGhHqXqWWybxEXa3",
+  goplan: "price_1SQ78xCtoGhHqXqW69rFgfkc",
+  professional: "price_1SQUCECtoGhHqXqWspUR1Af2",
+};
+
+export const planMapping : any =
+  process.env.NODE_ENV === "production" ? prodPlanMapping : devPlanMapping;
+
 
 export const planMappingNumber: any = {
   "starter": 0,
