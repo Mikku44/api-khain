@@ -54,7 +54,7 @@ export default function PricingCard({ plan, onButtonClick, isHighlighted = false
             >
               {plan.price}
             </motion.span>
-            <span className="text-sm text-gray-500">/month</span>
+            <span className="text-sm text-gray-500">/purchase</span>
           </div>
         </div>
 

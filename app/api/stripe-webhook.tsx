@@ -49,6 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
         case "checkout.session.completed": {
             const session = event.data.object as Stripe.Checkout.Session;
             let encrypt = ""
+            let product_type = "product"
             console.log("✅ CHECKOUT COMPLETED");
             console.log("id:", session.id);
             console.log("amount_total:", session.amount_total);
@@ -64,10 +65,16 @@ export async function action({ request }: ActionFunctionArgs) {
                 const product = item.price?.product as Stripe.Product;
                 console.log('Product Name:', product.name);
                 console.log('Product Metadata:', product.metadata?.encypt);
-                encrypt = product.metadata?.encypt
+                encrypt = product.metadata?.encypt;
+                product_type = product.metadata?.type || "product"
             });
 
             const secretKey = process.env.MY_SECRET_KEY!;
+
+            if(product_type == "package"){
+                console.log("sent package")
+                break;
+            }
 
             const fileLink = encrypt
                 ? encrypt

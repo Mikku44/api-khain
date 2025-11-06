@@ -24,10 +24,13 @@ export default function UserPopover({ currentUser, apiUsage }: {
             }
 
             console.log("Realtime usage:", data.usageApi);
-            setUsageAPI(prev => ({...prev,used : data.usageApi || 0}));
+            setUsageAPI(prev => ({
+                limit: data.api_limit,
+                used: data.usageApi || 0
+            }));
         });
 
-        
+
         // return () => unsubscribe();
     }, [currentUser]);
 
@@ -69,7 +72,12 @@ export default function UserPopover({ currentUser, apiUsage }: {
                             {currentUser?.displayName ?? "User"}
                         </Popover.Title>
 
+
+
                         <Popover.Description className={styles.Description}>
+
+                            
+
                             <div className={styles.InfoRow}>
                                 <span>API Usage</span>
                                 <span>
@@ -84,9 +92,21 @@ export default function UserPopover({ currentUser, apiUsage }: {
                                 />
                             </div>
 
+                            <button 
+                             onClick={() => {
+
+                                    navigator("/payments")
+                                }}
+                            className={styles.UpgradeButton}>
+                                Payment History
+                            </button>
+                            <div className="mb-2"></div>
                             <button
                                 className={styles.UpgradeButton}
-                                onClick={() => navigator("/upgrade")}
+                                onClick={() => {
+
+                                    navigator("/upgrade")
+                                }}
                             >
                                 Upgrade Plan →
                             </button>

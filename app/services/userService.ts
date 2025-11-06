@@ -41,29 +41,60 @@ export const userService = {
     return { id: user.user_id, ...dataToSave };
   },
 
-   /**
-   * Increase API usage count by 1 (or custom amount)
-   */
-   async increaseApiUsage(user_id: string, amount: number = 1, limit: number = 1000) {
+  async increaseApiLimit(user_id: string, amount: number = 100) {
     if (!user_id) throw new Error("user_id is required");
 
     const userRef = doc(db, "users", user_id);
     const userSnap = await getDoc(userRef);
 
+
+
+    const currentLimit = userSnap.data()?.api_limit ?? 500;
+
+    // increment limit safely
+    const newLimit = currentLimit + amount;
+
+    await updateDoc(userRef, {
+      api_limit: newLimit,
+      updated_at: Timestamp.now(),
+    });
+
+    return newLimit;
+  }
+  ,
+
+  /**
+  * Increase API usage count by 1 (or custom amount)
+  */
+  async increaseApiUsage(
+    user_id: string,
+    amount: number = 1,
+    defaultLimit: number = 500
+  ) {
+    if (!user_id) throw new Error("user_id is required");
+
+    const userRef = doc(db, "users", user_id);
+    const userSnap = await getDoc(userRef);
+
+    // If user doesn't exist, create with default usage + limit
     if (!userSnap.exists()) {
-      // create user if not exist
       await setDoc(userRef, {
         user_id,
-        usage: { api: amount },
+        usage: {
+          api: amount,
+          api_limit: defaultLimit, // ✅ store initial API limit
+        },
         created_at: Timestamp.now(),
         updated_at: Timestamp.now(),
       });
       return amount;
     }
 
-    const currentUsage = userSnap.data()?.usage?.api ?? 0;
+    const data = userSnap.data();
+    const currentUsage = data?.usage?.api ?? 0;
+    const userLimit = data?.usage?.api_limit ?? defaultLimit; // ✅ read stored limit or fallback
 
-    if (currentUsage >= limit) {
+    if (currentUsage >= userLimit) {
       throw new Error("You have reached your API usage limit.");
     }
 
@@ -87,36 +118,36 @@ export const userService = {
   },
 
   async listenToUserUsageApi(user_id: string, callback: (data: any | null) => void) {
-  if (!user_id) throw new Error("user_id is required");
+    if (!user_id) throw new Error("user_id is required");
 
-  const userRef = doc(db, "users", user_id);
+    const userRef = doc(db, "users", user_id);
 
-  // Listen in realtime to this user's document
-  const unsubscribe = onSnapshot(
-    userRef,
-    (userSnap: { exists: () => any; data: () => any; id: any; }) => {
-      if (!userSnap.exists()) {
+    // Listen in realtime to this user's document
+    const unsubscribe = onSnapshot(
+      userRef,
+      (userSnap: { exists: () => any; data: () => any; id: any; }) => {
+        if (!userSnap.exists()) {
+          callback(null);
+          return;
+        }
+
+        const data = userSnap.data();
+        const usageApi = data?.usage?.api ?? null;
+        const userLimit = data?.api_limit ?? 500;
+
+        // same style of return structure as your getUserById
+        callback({
+          id: userSnap.id,
+          usageApi,
+          api_limit: userLimit,
+        });
+      },
+      (error) => {
+        console.error("Error listening to user:", error);
         callback(null);
-        return;
       }
+    );
 
-      const data = userSnap.data();
-      const usageApi = data?.usage?.api ?? null;
-      const userPlan = data?.plan ?? null;
-
-      // same style of return structure as your getUserById
-      callback({
-        id: userSnap.id,
-        usageApi,
-        plan: userPlan,
-      });
-    },
-    (error) => {
-      console.error("Error listening to user:", error);
-      callback(null);
-    }
-  );
-
-  return unsubscribe; // allow caller to stop listening
-}
+    return unsubscribe; // allow caller to stop listening
+  }
 };

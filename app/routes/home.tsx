@@ -81,7 +81,7 @@ export default function Home() {
               </p>
               <p className="text-gray-500 dark:text-[#92adc9] text-base font-normal leading-normal">
                 Create, manage, and secure your API keys. For more information, read our{" "}
-                <a className="text-primary hover:underline" href="#">
+                <a className="text-primary hover:underline" href="/docs">
                   API documentation
                 </a>.
               </p>
@@ -91,8 +91,8 @@ export default function Home() {
                 className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white gap-2 pl-5 text-base font-bold leading-normal tracking-[0.015em]"
                 onClick={() => setShowModal(true)}
               >
-                <span className="material-symbols-outlined">add</span>
-                <span className="truncate">Generate New API Key</span>
+               
+                <span className="">New API Key</span>
               </button>
             </div>
           </div>
@@ -148,7 +148,7 @@ export default function Home() {
                 </thead>
                 <tbody>
                   {keys
-                    .filter(item => {
+                    .filter((item : any) => {
                       const statusMatch = curStatus
                         ? (item.status || item.plan).toLowerCase() === curStatus.toLowerCase()
                         : true;

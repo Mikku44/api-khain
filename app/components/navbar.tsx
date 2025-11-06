@@ -48,7 +48,7 @@ export default function Navbar() {
                   />
                   <Avatar.Fallback className={"Fallback"}>{currentUser.displayName?.slice(0, 3)}</Avatar.Fallback>
                 </Avatar.Root> */}
-                <UserPopover currentUser={currentUser}   />
+                <UserPopover currentUser={currentUser}  />
              
                
                 <button
