@@ -66,7 +66,7 @@ export default function TransactionsPage() {
 
   // Compute totals
   const totalAmount = transactions.reduce((sum, tx) => sum + tx.amount, 0);
-  const accountBalance = 18254 + totalAmount; // mock example
+  const accountBalance = totalAmount; // mock example
 
   if (!currentUser) {
     return (
@@ -136,7 +136,7 @@ export default function TransactionsPage() {
               {/* --- Today --- */}
               {today.length > 0 && (
                 <>
-                  <p className="px-5 py-2 text-sm font-semibold text-gray-500">Today</p>
+                  {/* <p className="px-5 py-2 text-sm font-semibold text-gray-500">Today</p> */}
                   {today.map((tx) => (
                     <TransactionRow key={tx.session_id} tx={tx} />
                   ))}
