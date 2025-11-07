@@ -19,8 +19,8 @@ export const planMapping : any =
 
 export const planMappingNumber: any = {
   "starter": 0,
-  "goplan": 1000  ,
-  "professional": 3000
+  "goplan": 100  ,
+  "professional": 1000
 }
 
 

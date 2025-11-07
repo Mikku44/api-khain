@@ -11,7 +11,7 @@ export default function UserPopover({ currentUser, apiUsage }: {
     apiUsage?: { used: number; limit: number }
 }) {
 
-    const [usageAPI, setUsageAPI] = useState({ used: 0, limit: 500 });
+    const [usageAPI, setUsageAPI] = useState({ used: 0, limit: 50 });
 
     const navigator = useNavigate();
 

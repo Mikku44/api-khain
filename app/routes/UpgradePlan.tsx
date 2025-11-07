@@ -18,7 +18,7 @@ const plans = [
     name: "Starter",
     price: "฿0",
     limit: "Perfect for trying out",
-    features: ["Up to 500 API calls/purchase", "Email support", "Core features"],
+    features: ["Up to 50 API calls/purchase", "Email support", "Core features"],
     buttonText: "Get Started",
   },
   {
@@ -27,7 +27,7 @@ const plans = [
     price: "฿49",
     limit: "For growing teams",
     features: [
-      "Up to 1,000 API calls/purchase",
+      "Up to 100 API calls/purchase",
       "Priority email & chat support",
       "All core features",
       "Custom integrations",
@@ -40,7 +40,7 @@ const plans = [
     price: "฿99",
     limit: "For growing teams",
     features: [
-      "Up to 3,000 API calls/purchase",
+      "Up to 1,000 API calls/purchase",
       "Priority email & chat support",
       "All core features",
       "Custom integrations",

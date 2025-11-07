@@ -55,8 +55,8 @@ export default function Response() {
   if (loading) return <div className="flex w-full h-screen items-center justify-center">Loading...</div>;
   if (!web) return <div className="flex w-full h-screen items-center justify-center">Not found.</div>;
 
-  // ✅ Sanitize HTML safely with DOMPurify
-  const cleanHTML = DOMPurify.sanitize(web.body || "");
+  
+  const cleanHTML = (web.body || "");
 
   return (
     <div className="p-6">

@@ -32,11 +32,18 @@ export const webResponsesService = {
     };
 
     if (webSnap.exists()) {
-      await updateDoc(webRef, dataToSave);
+      const existingData = webSnap.data();
+
+      if (web.user_id === existingData.user_id) {
+        await updateDoc(webRef, dataToSave);
+      } else {
+        throw new Error("You don't have permission to edit this page!");
+      }
+
     } else {
-      if(web.id) {
+      if (web.id) {
         return {
-          error : "Web ID does not exist."
+          error: "Web ID does not exist."
         }
       }
       await setDoc(webRef, {

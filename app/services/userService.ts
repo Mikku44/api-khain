@@ -69,7 +69,7 @@ export const userService = {
   async increaseApiUsage(
     user_id: string,
     amount: number = 1,
-    defaultLimit: number = 500
+    defaultLimit: number = 50
   ) {
     if (!user_id) throw new Error("user_id is required");
 
@@ -133,7 +133,7 @@ export const userService = {
 
         const data = userSnap.data();
         const usageApi = data?.usage?.api ?? null;
-        const userLimit = data?.api_limit ?? 500;
+        const userLimit = data?.api_limit ?? 50;
 
         // same style of return structure as your getUserById
         callback({
