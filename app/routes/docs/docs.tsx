@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Copy, Check, BookOpen, Lock } from "lucide-react";
 import type { Route } from "./+types/docs";
+import {motion}  from 'framer-motion';
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -13,13 +14,25 @@ export function meta({ }: Route.MetaArgs) {
 export default function DocsPage() {
   const [copied, setCopied] = useState(false);
 
+  const [currentTittle, setCurrentTittle] = useState(0);
+
   const handleCopy = (text : string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+
+  // to create 
   const curlExample = `curl -X POST "https://api.khain.app/api/v1/web-response" \\
+  -H "Authorization: Bearer YOUR_ACTIVE_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "body": "<h1>Hello World!</h1>",
+    "name": "Example Web Response"
+  }'`;
+  // to update
+   const curlUpdateExample = `curl -X POST "https://api.khain.app/api/v1/web-response" \\
   -H "Authorization: Bearer YOUR_ACTIVE_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -40,15 +53,19 @@ export default function DocsPage() {
   "url": "https://api.khain.app/web/abc123xyz"
 }`;
 
+  const unHightlight = "block py-2 text-sm text-gray-600 hover:text-gray-900";
+  const HightLight = "block py-2 text-sm text-gray-900 font-medium";
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-50">
+      <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="max-w-[960px] mx-auto px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
               <div className="text-xl font-bold text-gray-900">Khain</div>
             </div>
+          
             <div className="hidden md:flex items-center gap-6 text-sm">
               <a href="#" className="text-gray-900 font-medium">Documentation</a>
               <a href="#" className="text-gray-600 hover:text-gray-900">API Reference</a>
@@ -68,21 +85,22 @@ export default function DocsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Sidebar */}
           <aside className="lg:col-span-3">
+              {/* menu hightlight */}
             <div className="sticky top-24">
               <div className="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-3">
                 Documentation
               </div>
               <nav className="space-y-1">
-                <a href="#overview" className="block py-2 text-sm text-gray-600 hover:text-gray-900">
+                <a href="#overview" className={currentTittle == 0 ? HightLight : unHightlight }>
                   Overview
                 </a>
-                <a href="#authentication" className="block py-2 text-sm text-gray-900 font-medium">
+                <a href="#authentication"  className={currentTittle == 1 ? HightLight : unHightlight }>
                   Authentication
                 </a>
-                <a href="#making-requests" className="block py-2 text-sm text-gray-600 hover:text-gray-900">
+                <a href="#making-requests"  className={currentTittle == 2 ? HightLight : unHightlight }>
                   Making requests
                 </a>
-                <a href="#response-schema" className="block py-2 text-sm text-gray-600 hover:text-gray-900">
+                <a href="#response-schema"  className={currentTittle == 3 ? HightLight : unHightlight }>
                   Response schema
                 </a>
               </nav>
@@ -103,7 +121,9 @@ export default function DocsPage() {
 
             {/* Overview */}
             <section id="overview" className="mb-16 scroll-mt-24">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Overview</h2>
+              <motion.h2 
+              onViewportEnter={() => setCurrentTittle(0)}
+              className="text-3xl font-bold text-gray-900 mb-4">Overview</motion.h2>
               <p className="text-base text-gray-600 leading-relaxed mb-4">
                 The Khain API allows you to programmatically create web responses that can be accessed via unique URLs. All API requests must be made over HTTPS and include proper authentication headers.
               </p>
@@ -115,7 +135,8 @@ export default function DocsPage() {
             </section>
 
             {/* Authentication */}
-            <section id="authentication" className="mb-16 scroll-mt-24">
+            <motion.section    onViewportEnter={() => setCurrentTittle(1)} 
+            id="authentication" className="mb-16 scroll-mt-24">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Authentication</h2>
               <p className="text-base text-gray-600 leading-relaxed mb-6">
                 The Khain API uses Bearer token authentication. Include your API key in the Authorization header of every request.
@@ -139,10 +160,12 @@ export default function DocsPage() {
                   Authorization: Bearer YOUR_ACTIVE_TOKEN
                 </div>
               </div>
-            </section>
+            </motion.section>
 
             {/* Making Requests */}
-            <section id="making-requests" className="mb-16 scroll-mt-24">
+            <motion.section
+               onViewportEnter={() => setCurrentTittle(2)}
+            id="making-requests" className="mb-16 scroll-mt-24">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Making requests</h2>
               <p className="text-base text-gray-600 leading-relaxed mb-6">
                 Send a POST request to the endpoint with your HTML content and an optional name for the web response.
@@ -210,10 +233,12 @@ export default function DocsPage() {
                   </pre>
                 </div>
               </div>
-            </section>
+            </motion.section>
 
             {/* Response Schema */}
-            <section id="response-schema" className="mb-16 scroll-mt-24">
+            <motion.section
+               onViewportEnter={() => setCurrentTittle(3)}
+            id="response-schema" className="mb-16 scroll-mt-24">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Response schema</h2>
               <p className="text-base text-gray-600 leading-relaxed mb-6">
                 The API returns a JSON object containing the operation status, saved data, and a public URL.
@@ -277,7 +302,7 @@ export default function DocsPage() {
                   </tbody>
                 </table>
               </div>
-            </section>
+            </motion.section>
 
             {/* Footer */}
             <footer className="pt-12 border-t border-gray-200">
@@ -287,7 +312,7 @@ export default function DocsPage() {
                 </p>
                 <div className="flex items-center gap-6 text-sm">
                   <a href="mailto:khain.app@gmail.com" className="text-gray-600 hover:text-gray-900">
-                    Support
+                    Need a Support?
                   </a>
                   {/* <a href="#" className="text-gray-600 hover:text-gray-900">
                     Terms

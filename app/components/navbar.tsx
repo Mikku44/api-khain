@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { logoutUser } from "~/libs/firebase/auth";
 import UserPopover from "./UserPopover";
+import "~/css/button.module.css";
 
 
 export default function Navbar() {

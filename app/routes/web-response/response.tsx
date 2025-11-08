@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import type { IWeb } from "~/models/webModel";
 import { webResponsesService } from "~/services/webResponseService";
 import type { Route } from "./+types/response";
+import FloatingAIChat from "~/components/FloatingAIChat";
 
 
 
@@ -71,8 +72,9 @@ export default function Response() {
 
   return (
     <div className="">
+      {/* <FloatingAIChat /> */}
       {/* <h1 className="text-xl font-bold mb-4">{web.name || "Untitled Page"}</h1> */}
-      {web.status !== "active" && <div className="w-full bg-indigo-500 text-white text-center
+      {web.status !== "active" && <div className="w-full bg-zinc-50 text-white text-center
        sticky top-0 py-2 flex items-center justify-center gap-2">
         <Link to="/web-list" className="rounded-md border w-fit px-4 py-1 border-white">Preview Mode</Link>
         This web response is currently in draft mode.</div>}
