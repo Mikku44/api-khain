@@ -76,7 +76,7 @@ export default function Response() {
       {/* <h1 className="text-xl font-bold mb-4">{web.name || "Untitled Page"}</h1> */}
       {web.status !== "active" && <div className="w-full bg-indigo-500 text-white text-center
        sticky top-0 py-2 flex items-center justify-center gap-2">
-        <Link to="/web-list" className="rounded-md border w-fit px-4 py-1 border-white">Preview Mode</Link>
+        <Link to="/web-list" target="_blank" className="rounded-md border w-fit px-4 py-1 border-white">Preview Mode</Link>
         This web response is currently in draft mode.</div>}
       <div
         className="prose max-w-none"
