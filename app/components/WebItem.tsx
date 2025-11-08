@@ -53,6 +53,7 @@ export default function WebItem({ webList }: Props) {
         {webList?.map((web) => (
           <Link
             key={web.id}
+            target="_blank"
             className="group relative bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
             to={`/web/${web.id}`}
           >
