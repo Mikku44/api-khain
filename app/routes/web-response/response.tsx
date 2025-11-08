@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import DOMPurify from "dompurify";
 import type { IWeb } from "~/models/webModel";
 import { webResponsesService } from "~/services/webResponseService";
@@ -11,8 +11,8 @@ export async function clientLoader({
   params,
 }: Route.ClientLoaderArgs) {
 
-    const webResponse = webResponsesService.getWebById(params.id);
-    
+  const webResponse = webResponsesService.getWebById(params.id);
+
 
   return webResponse;
 }
@@ -42,6 +42,17 @@ export default function Response() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+   
+      let headerTag = document.querySelector("head > link:nth-child(6)");
+      headerTag?.remove();
+      headerTag = document.querySelector("head > link:nth-child(7)");
+      headerTag?.remove();
+      headerTag?.remove();
+      headerTag = document.querySelector("head > style:nth-child(10)");
+    
+  }, [document]);
+
+  useEffect(() => {
     if (!id) return;
 
     const unsubscribe = webResponsesService.listenWebById(id, (data) => {
@@ -55,13 +66,16 @@ export default function Response() {
   if (loading) return <div className="flex w-full h-screen items-center justify-center">Loading...</div>;
   if (!web) return <div className="flex w-full h-screen items-center justify-center">Not found.</div>;
 
-  
+
   const cleanHTML = (web.body || "");
 
   return (
-    <div className="p-6">
+    <div className="">
       {/* <h1 className="text-xl font-bold mb-4">{web.name || "Untitled Page"}</h1> */}
-
+      {web.status !== "active" && <div className="w-full bg-indigo-500 text-white text-center
+       sticky top-0 py-2 flex items-center justify-center gap-2">
+        <Link to="/web-list" className="rounded-md border w-fit px-4 py-1 border-white">Preview Mode</Link>
+        This web response is currently in draft mode.</div>}
       <div
         className="prose max-w-none"
         dangerouslySetInnerHTML={{ __html: cleanHTML }}

@@ -7,6 +7,7 @@ export default [
         route("/upgrade", "routes/UpgradePlan.tsx"),
         route("/payments", "routes/payments.tsx"),
         route("/isthisai", "routes/isThisAi.tsx"),
+        route("/web-list", "routes/web-list.tsx"),
         route("/docs", "routes/docs/docs.tsx"),
 
     ]),

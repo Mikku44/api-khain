@@ -22,14 +22,17 @@ export default function Navbar() {
   return (
     <nav className=" fixed top-0 w-full z-10 ">
       <div className="max-w-[960px] mx-auto px-4 bg-white/70 border border-zinc-200 mt-2 rounded-xl">
-        <div className="flex justify-between h-16">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className=" flex items-center gap-2">
-            <div className="text-xl size-10 font-bold text-gray-800 dark:text-white">
-              <img src="/khain.png" alt="khain logo" />
-            </div>
-            <div className="font-medium">API KHAIN</div>
-          </Link>
+          <div className="flex items-center gap-5">
+            <Link to="/" className=" flex items-center gap-2">
+              <div className="text-xl size-10 font-bold text-gray-800 dark:text-white">
+                <img src="/khain.png" alt="khain logo" />
+              </div>
+              <div className="font-medium">API KHAIN</div>
+            </Link>
+            <Link to="/web-list" className="hover:bg-zinc-50 py-2 px-4 rounded-lg duration-200">Web Response</Link>
+          </div>
 
           {/* Desktop Links */}
           <div className="hidden sm:ml-6 sm:flex sm:space-x-6 items-center">

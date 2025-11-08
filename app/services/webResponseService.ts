@@ -9,6 +9,7 @@ import {
   where,
   Timestamp,
   onSnapshot,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "~/libs/firebase/client";
 import type { IWeb } from "~/models/webModel";
@@ -28,6 +29,7 @@ export const webResponsesService = {
 
     const dataToSave = {
       ...web,
+      
       updated_at: Timestamp.now(),
     };
 
@@ -48,6 +50,7 @@ export const webResponsesService = {
       }
       await setDoc(webRef, {
         ...dataToSave,
+        status:"active",
         created_at: Timestamp.now(),
       });
     }
@@ -78,6 +81,13 @@ export const webResponsesService = {
     const webSnap = await getDoc(webRef);
     if (!webSnap.exists()) return null;
     return { id: webSnap.id, ...webSnap.data() };
+  },
+
+  async deleteWebById(id: string) {
+    const webRef = doc(db, "web-responses", id);
+    await deleteDoc(webRef);
+   
+    return true;
   },
 
   /**
