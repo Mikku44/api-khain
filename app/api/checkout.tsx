@@ -10,7 +10,7 @@ const devPlanMapping = {
 const prodPlanMapping = {
   starter: "price_1SPlp0CtoGhHqXqWWybxEXa3",
   goplan: "price_1SQ78xCtoGhHqXqW69rFgfkc",
-  professional: "price_1SQUCECtoGhHqXqWspUR1Af2",
+  professional: "price_1SRXUyCtoGhHqXqWNFhJsxyF",
 };
 
 export const planMapping : any =
