@@ -27,7 +27,7 @@ const plans = [
     price: "฿49",
     limit: "For growing teams",
     features: [
-      "Up to 100 API calls/purchase",
+      "Up to 300 API calls/purchase",
       "Priority email & chat support",
       "All core features",
       "Custom integrations",
