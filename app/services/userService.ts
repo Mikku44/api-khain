@@ -95,7 +95,7 @@ export const userService = {
     const userLimit = data?.usage?.api_limit ?? defaultLimit; // ✅ read stored limit or fallback
 
     if (currentUsage >= userLimit) {
-      throw new Error("You have reached your API usage limit.");
+      return -1;
     }
 
     // increment safely

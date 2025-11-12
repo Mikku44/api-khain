@@ -52,11 +52,17 @@ export async function action({ request }: { request: Request }) {
       user_id,
     } as IWeb;
 
+    const increasedUsage = await userService.increaseApiUsage(user_id)
+
+
+    if(increasedUsage == -1) {
+      throw new Error("You have reached your API usage limit.");
+    }
     // ✅ Save to Firestore
     const savedWeb  : IWeb & any = await webResponsesService.createOrUpdateWeb(payload);
     if(savedWeb.error) throw Error(savedWeb.error)
       
-    const increasedUsage = userService.increaseApiUsage(user_id)
+    
     return new Response(
       JSON.stringify({
         message: "Web response saved successfully",
