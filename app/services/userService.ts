@@ -47,19 +47,17 @@ export const userService = {
     const userRef = doc(db, "users", user_id);
     const userSnap = await getDoc(userRef);
 
+    const data = userSnap.data();
+    const currentLimit = data?.api_limit || 100;
 
 
-    const currentLimit = userSnap.data()?.api_limit ?? 500;
-
-    // increment limit safely
-    const newLimit = currentLimit + amount;
 
     await updateDoc(userRef, {
-      api_limit: newLimit,
+      api_limit: increment(amount),
       updated_at: Timestamp.now(),
     });
+    return currentLimit + amount;
 
-    return newLimit;
   }
   ,
 
@@ -92,9 +90,10 @@ export const userService = {
 
     const data = userSnap.data();
     const currentUsage = data?.usage?.api ?? 0;
-    const userLimit = data?.usage?.api_limit ?? defaultLimit; // ✅ read stored limit or fallback
+    const userLimit = data?.api_limit || defaultLimit; // ✅ read stored limit or fallback
 
-    if (currentUsage >= userLimit) {
+    if (parseInt(currentUsage) >= parseInt(userLimit)) {
+      console.log("CURRENT : ", currentUsage, " LIMIT : ", userLimit, "USER : ", data.api_limit)
       return -1;
     }
 

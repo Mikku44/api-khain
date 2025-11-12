@@ -201,7 +201,9 @@ function TransactionRow({ tx }: { tx: any }) {
       <p className={`text-base font-semibold ${tx.amount < 0 ? "text-red-600" : "text-gray-900"}`}>
         {tx.amount < 0 ? "-" : "+"} ฿
         {Math.abs(tx.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+         <div className="text-sm font-normal">{tx?.calls || 0} Calls</div>
       </p>
+     
     </div>
   );
 }

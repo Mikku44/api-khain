@@ -78,6 +78,7 @@ export default function SessionCheckout() {
       transactionsService.create({
         amount: total / 100,
         name: plan,
+        calls : planMappingNumber[plan],
         user_id: currentUser.uid,
         session_id: id,
         created_at: Timestamp.now(),
